@@ -51,7 +51,7 @@ public class ClienteController {
     }
     
     @GetMapping(value="/conjunto/{id}")
-    public Cliente listarPeloIdComum(@PathVariable Long id) {
+    public Cliente listarPeloIdconjunto(@PathVariable Long id) {
         Optional<Cliente> clienteResponse = clienteRepository.findById(id);
         Cliente cliente = clienteResponse.get();
         return cliente;
