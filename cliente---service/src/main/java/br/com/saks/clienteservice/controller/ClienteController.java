@@ -50,32 +50,19 @@ public class ClienteController {
         return clienteRepository.findAll();
     }
     
-    @GetMapping(value="/conjunto/{id}")
-    public Cliente listarPeloIdconjunto(@PathVariable Long id) {
-        Optional<Cliente> clienteResponse = clienteRepository.findById(id);
-        Cliente cliente = clienteResponse.get();
-        return cliente;
-    }
-    
     @GetMapping(value="/{id}")
     public Cliente listarPeloId(@PathVariable Long id) {
         Optional<Cliente> clienteResponse = clienteRepository.findById(id);
-        Cliente cliente = clienteResponse.get();
-        
+        Cliente cliente = clienteResponse.get();  
         List<Interesse> interesses;
-        interesses = interesseService.listarPorIdCliente(id);
-        
-        List<Imovel> imoveis = new ArrayList<>();
-        
+        interesses = interesseService.listarPorIdCliente(id);   
+        List<Imovel> imoveis = new ArrayList<>();     
         for(Interesse interesse : interesses) {
             InteresseIdentity interesseId = interesse.getInteresseIdentity();
-            
             Imovel imovel = imovelService.listarPeloId(interesseId.getIdImovel());
             imoveis.add(imovel);
         }
-        
         cliente.setImoveisInteresse(imoveis);
-        
         return cliente;
     }
     
