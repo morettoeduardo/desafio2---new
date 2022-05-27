@@ -41,13 +41,13 @@ public class ImovelController {
     private ImovelRepository imovelRepository;
     
     @Autowired
-    private ClienteService clienteService;
+    private TipoImovelService tipoImovelService;
     
     @Autowired
     private InteresseService interesseService;
     
     @Autowired
-    private TipoImovelService tipoImovelService;
+    private ClienteService clienteService;
     
     @GetMapping
     public List<Imovel> listarTodos() {
@@ -56,6 +56,14 @@ public class ImovelController {
     
     @GetMapping(value="/conjunto/{id}")
     public Imovel listarPeloIdConjunto(@PathVariable Long id) {
+        Optional<Imovel> imovelResponse = imovelRepository.findById(id);
+        Imovel imovel = imovelResponse.get();
+        imovel.setTipoImovel(tipoImovelService.listarPeloId(imovel.getIdTipoImovel()));
+        return imovel;
+    }
+    
+    @GetMapping(value="/{id}")
+    public Imovel listarPeloId(@PathVariable Long id) {
         Optional<Imovel> imovelResponse = imovelRepository.findById(id);
         Imovel imovel = imovelResponse.get();
         imovel.setTipoImovel(tipoImovelService.listarPeloId(imovel.getIdTipoImovel()));
@@ -71,25 +79,6 @@ public class ImovelController {
                 imovelTipo.add(imovel);
         return imovelTipo;
     }
-    
-    @GetMapping(value="/{id}")
-    public Imovel listarPeloId(@PathVariable Long id) {
-        Optional<Imovel> imovelResponse = imovelRepository.findById(id);
-        Imovel imovel = imovelResponse.get();
-        imovel.setTipoImovel(tipoImovelService.listarPeloId(imovel.getIdTipoImovel()));
-        List<Interesse> interesses;
-        interesses = interesseService.listarPeloIdImovel(id);
-        List<Cliente> clientes = new ArrayList<>();
-        for(Interesse interesse : interesses) {
-            InteresseIdentity interesseId = interesse.getInteresseIdentity();
-            Cliente cliente = clienteService.listarPeloId(interesseId.getIdCliente());
-            clientes.add(cliente);
-        }
-        imovel.setClientesInteresse(clientes);
-        return imovel;
-    }
-    
-    
     
     @PostMapping
     public Imovel adicionar(@RequestBody Imovel imovel) {
