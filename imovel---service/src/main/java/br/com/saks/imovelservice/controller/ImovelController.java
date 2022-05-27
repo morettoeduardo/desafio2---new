@@ -41,13 +41,13 @@ public class ImovelController {
     private ImovelRepository imovelRepository;
     
     @Autowired
-    private TipoImovelService tipoImovelService;
+    private ClienteService clienteService;
     
     @Autowired
     private InteresseService interesseService;
     
     @Autowired
-    private ClienteService clienteService;
+    private TipoImovelService tipoImovelService;
     
     @GetMapping
     public List<Imovel> listarTodos() {
@@ -60,6 +60,16 @@ public class ImovelController {
         Imovel imovel = imovelResponse.get();
         imovel.setTipoImovel(tipoImovelService.listarPeloId(imovel.getIdTipoImovel()));
         return imovel;
+    }
+    
+    @GetMapping(value="/tipoimovel/{idTipoImovel}")
+    public List<Imovel> listarPeloIdTipoImovel(@PathVariable Long idTipoImovel) {
+        List<Imovel> imoveis = imovelRepository.findAll();
+        List<Imovel> imovelTipo = new ArrayList<>();
+        for(Imovel imovel : imoveis)
+            if(Objects.equals(imovel.getIdTipoImovel(), idTipoImovel))
+                imovelTipo.add(imovel);
+        return imovelTipo;
     }
     
     @GetMapping(value="/{id}")
@@ -79,15 +89,7 @@ public class ImovelController {
         return imovel;
     }
     
-    @GetMapping(value="/tipoimovel/{idTipoImovel}")
-    public List<Imovel> listarPeloIdTipoImovel(@PathVariable Long idTipoImovel) {
-        List<Imovel> imoveis = imovelRepository.findAll();
-        List<Imovel> imovelTipo = new ArrayList<>();
-        for(Imovel imovel : imoveis)
-            if(Objects.equals(imovel.getIdTipoImovel(), idTipoImovel))
-                imovelTipo.add(imovel);
-        return imovelTipo;
-    }
+    
     
     @PostMapping
     public Imovel adicionar(@RequestBody Imovel imovel) {
